@@ -1,0 +1,215 @@
+.dt-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+    border: none;
+}
+
+.dt-card .card-header {
+    background: #fff;
+    border-bottom: 1px solid #f0f0f0;
+    border-radius: 16px 16px 0 0;
+    padding: 18px 20px;
+}
+
+table.dataTable thead th {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #555;
+    border-bottom: 2px solid #f0f0f0 !important;
+    white-space: nowrap;
+}
+
+table.dataTable tbody td {
+    font-size: 13.5px;
+    vertical-align: middle;
+    padding: 10px 14px;
+}
+
+table.dataTable tbody tr:hover {
+    background: #fafafa;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+    border-radius: 8px;
+    border: 1.5px solid #e0e0e0;
+    padding: 6px 12px;
+    font-size: 13px;
+}
+
+.dataTables_wrapper .dataTables_filter input:focus {
+    border-color: #c62828;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.1);
+}
+
+.dataTables_wrapper .dataTables_length select {
+    border-radius: 8px;
+    border: 1.5px solid #e0e0e0;
+    padding: 5px 10px;
+    font-size: 13px;
+}
+
+.dataTables_wrapper .dataTables_info {
+    font-size: 12px;
+    color: #888;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: linear-gradient(135deg, #c62828, #e64a19) !important;
+    border-color: transparent !important;
+    color: #fff !important;
+    border-radius: 8px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: #ffebee !important;
+    border-color: transparent !important;
+    color: #c62828 !important;
+    border-radius: 8px;
+}
+
+/* Status badges */
+.badge-aktif {
+    background: #e8f5e9;
+    color: #2e7d32;
+    font-weight: 700;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 99px;
+}
+
+.badge-nonaktif {
+    background: #fff3e0;
+    color: #e65100;
+    font-weight: 700;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 99px;
+}
+
+.badge-arsip {
+    background: #eceff1;
+    color: #546e7a;
+    font-weight: 700;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 99px;
+}
+
+.badge-digit {
+    background: #e3f2fd;
+    color: #1565c0;
+    font-weight: 700;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 99px;
+}
+
+/* Action buttons */
+.btn-action {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    border: none;
+    transition: all 0.18s;
+}
+
+.btn-action:hover {
+    transform: translateY(-1px);
+}
+
+/* Modal */
+.modal-header-custom {
+    background: linear-gradient(135deg, #c62828, #e64a19);
+    color: #fff;
+    border-radius: 14px 14px 0 0;
+}
+
+.modal-header-custom .btn-close {
+    filter: invert(1);
+}
+
+.modal-content {
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.form-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 5px;
+}
+
+.form-control,
+.form-select {
+    border-radius: 10px;
+    border: 1.5px solid #e0e0e0;
+    font-size: 13.5px;
+    padding: 9px 12px;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #c62828;
+    box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.12);
+}
+
+.form-text {
+    font-size: 11.5px;
+}
+
+/* Toggle switch */
+.form-switch .form-check-input {
+    width: 42px;
+    height: 22px;
+}
+
+.form-switch .form-check-input:checked {
+    background-color: #c62828;
+    border-color: #c62828;
+}
+
+/* Stat pills di header */
+.stat-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f8f9fa;
+    border: 1px solid #eee;
+    border-radius: 99px;
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #555;
+}
+
+.stat-pill .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+/* Progress mini */
+.prog-mini {
+    height: 5px;
+    border-radius: 99px;
+    background: #f0f0f0;
+    overflow: hidden;
+    margin-top: 4px;
+}
+
+.prog-mini-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, #c62828, #e64a19);
+}
