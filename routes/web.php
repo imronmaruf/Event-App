@@ -1,14 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\{DashboardController, EventController, ParticipantController, AttendanceController, UnitController, UserController};
+use App\Http\Controllers\Admin\RankingController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Admin\{
-    DashboardController,
-    EventController,
-    ParticipantController,
-    AttendanceController,
-    UnitController,
-    UserController
-};
 use App\Http\Controllers\Public\AttendanceController as PublicAttendanceController;
 use Illuminate\Support\Facades\Route;
 
@@ -65,6 +59,38 @@ Route::prefix('admin')->name('admin.')->middleware(['auth.admin'])->group(functi
         Route::post('/import',     [ParticipantController::class, 'importProcess'])->name('import.process');
         Route::get('/template',    [ParticipantController::class, 'downloadTemplate'])->name('template');
     });
+
+    // ── Rankings (nested dalam event) ───────────────────────
+    // Route::prefix('events/{event}/rankings')->name('rankings.')->group(function () {
+    //     Route::get('/', [RankingController::class, 'index'])->name('index');
+    //     Route::get('/config', [RankingController::class, 'config'])->name('config');
+    //     Route::post('/upload', [RankingController::class, 'upload'])->name('upload');
+    // });
+    Route::prefix('events/{event}/rankings')->name('rankings.')->group(function () {
+
+        // Halaman utama ranking
+        Route::get('/', [RankingController::class, 'index'])->name('index');
+
+        // Simpan konfigurasi poin
+        Route::post('/config', [RankingController::class, 'saveConfig'])->name('config.save');
+        Route::get('/config', [RankingController::class, 'config'])->name('config');
+
+        // Upload file hasil ujian
+        Route::post('/upload', [RankingController::class, 'upload'])->name('upload');
+
+        // Download template Excel
+        Route::get('/template', [RankingController::class, 'downloadTemplate'])->name('template');
+
+        // Export ranking
+        Route::get('/export', [RankingController::class, 'export'])->name('export');
+
+        // Reset data
+        Route::delete('/reset', [RankingController::class, 'reset'])->name('reset');
+
+        // Data ranking (AJAX / DataTable)
+        Route::get('/data', [RankingController::class, 'rankingData'])->name('data');
+    });
+
 
     // ── Attendances (nested dalam event) ──────────────────────
     Route::prefix('events/{event}/attendances')->name('attendances.')->group(function () {

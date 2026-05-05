@@ -337,6 +337,7 @@
                     <span class="fw-bold" style="font-size:14px;color:#444;"><i class="bi bi-lightning me-1"
                             style="color:#f4b846;"></i>Menu Cepat</span>
                 </div>
+
                 <div class="card-body">
                     <div class="row g-3">
                         <div class="col-6 col-md-3">
@@ -399,6 +400,7 @@
 
             {{-- Konfigurasi Digit --}}
             <div class="info-card">
+
                 <div class="card-header">
                     <span class="fw-bold" style="font-size:14px;color:#1565c0;"><i class="bi bi-key me-1"></i>Konfigurasi
                         Kode Absensi</span>
@@ -407,6 +409,7 @@
                         <i class="bi bi-gear me-1"></i>Ubah Pengaturan
                     </button>
                 </div>
+
                 <div class="card-body">
                     <div class="d-flex flex-wrap gap-3 align-items-center mb-3">
                         @if ($event->digit_count)
