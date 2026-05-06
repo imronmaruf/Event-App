@@ -17,7 +17,7 @@
 
         // ── API ──
         async function api(path, method = 'GET', body = null) {
-            const r = await fetch(`${BASE}/absensi/${SLUG}${path}`, {
+            const r = await fetch(`/absensi/${SLUG}/${path}`, {
                 method,
                 headers: {
                     'Content-Type': 'application/json',
