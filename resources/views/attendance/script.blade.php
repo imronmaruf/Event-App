@@ -17,6 +17,7 @@
 
         // ── API ──
         async function api(path, method = 'GET', body = null) {
+            path = path.replace(/^\/+/, '');
             const r = await fetch(`/absensi/${SLUG}/${path}`, {
                 method,
                 headers: {
