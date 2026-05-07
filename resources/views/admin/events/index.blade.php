@@ -143,11 +143,17 @@
                                         <i class="bi bi-qr-code"></i>
                                     </a>
 
+                                    <a href="{{ route('admin.rankings.index', $event) }}" class="btn-action"
+                                        style="background:#fff8e1;color:#f57f17;" title="Hasil & Ranking Perlombaan">
+                                        <i class="bi bi-trophy"></i>
+                                    </a>
+
                                     {{-- Hapus --}}
                                     <button class="btn-action" style="background:#ffebee;color:#c62828;" title="Hapus"
                                         onclick="openDeleteModal({{ $event->id }}, '{{ addslashes($event->name) }}')">
                                         <i class="bi bi-trash"></i>
                                     </button>
+
                                 </td>
                             </tr>
                         @endforeach
