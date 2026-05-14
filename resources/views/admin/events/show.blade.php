@@ -342,37 +342,39 @@
                     <div class="row g-3">
                         <div class="col-6 col-md-3">
                             <a href="{{ route('admin.participants.index', $event) }}" class="quick-btn">
-                                <span class="icon">👥</span> Data Peserta
+                                <i class="icon bi bi-people-fill"></i>Data Peserta
                                 <small class="text-muted fw-normal">{{ $stats['total'] }} peserta</small>
                             </a>
                         </div>
                         <div class="col-6 col-md-3">
                             <a href="{{ route('admin.participants.import', $event) }}" class="quick-btn">
-                                <span class="icon">📥</span> Import Excel
+                                <i class="icon bi bi-file-earmark-arrow-down-fill"></i>Import
+                                Excel
                                 <small class="text-muted fw-normal">Upload peserta</small>
                             </a>
                         </div>
                         <div class="col-6 col-md-3">
                             <a href="{{ route('admin.attendances.index', $event) }}" class="quick-btn">
-                                <span class="icon">✅</span> Data Absensi
+                                <i class="icon bi bi-person-fill-check"></i> Data Absensi
                                 <small class="text-muted fw-normal">{{ $stats['hadir'] }} hadir</small>
                             </a>
                         </div>
                         <div class="col-6 col-md-3">
                             <a href="{{ route('admin.attendances.by-room', $event) }}" class="quick-btn">
-                                <span class="icon">🚪</span> Per Ruang
+
+                                <i class="icon bi bi-door-open-fill"></i>Per Ruang
                                 <small class="text-muted fw-normal">Rekap ruang</small>
                             </a>
                         </div>
                         <div class="col-6 col-md-3">
-                            <a href="{{ $event->publicAttendanceUrl() }}" target="_blank" class="quick-btn">
-                                <span class="icon">📱</span> Buka Absensi
-                                <small class="text-muted fw-normal">Halaman publik</small>
+                            <a href="{{ route('admin.rankings.index', $event) }}" class="quick-btn">
+                                <i class="icon bi bi-trophy"></i>Buka Perangkingan
+                                <small class="text-muted fw-normal">Ranking</small>
                             </a>
                         </div>
                         <div class="col-6 col-md-3">
                             <a href="{{ route('admin.attendances.export', $event) }}" class="quick-btn">
-                                <span class="icon">📊</span> Export Excel
+                                <i class="icon bi-file-earmark-arrow-up-fill"></i>Export Excel
                                 <small class="text-muted fw-normal">Download data</small>
                             </a>
                         </div>
@@ -382,7 +384,8 @@
                                 <button type="submit" class="quick-btn w-100"
                                     onclick="return confirm('Regenerate kode absensi semua peserta?')"
                                     style="cursor:pointer;border:1.5px solid #f0f0f0;">
-                                    <span class="icon">🔑</span> Regenerate Kode
+                                    <i class="icon bi bi-key-fill"></i>
+                                    Regenerate Kode
                                     <small class="text-muted fw-normal">Kode absensi</small>
                                 </button>
                             </form>
@@ -390,7 +393,8 @@
                         <div class="col-6 col-md-3">
                             <button class="quick-btn w-100" onclick="openResetModal()"
                                 style="cursor:pointer;border:1.5px solid #ffcdd2;color:#c62828;">
-                                <span class="icon">🗑️</span> Reset Absensi
+                                <i class="icon bi bi-trash-fill"></i>
+                                Reset Absensi
                                 <small style="color:#c62828;font-weight:400;">Hapus semua data</small>
                             </button>
                         </div>

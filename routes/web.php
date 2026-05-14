@@ -94,11 +94,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth.admin'])->group(functi
 
     // ── Attendances (nested dalam event) ──────────────────────
     Route::prefix('events/{event}/attendances')->name('attendances.')->group(function () {
-        Route::get('/',            [AttendanceController::class, 'index'])->name('index');
-        Route::get('/per-ruang',   [AttendanceController::class, 'byRoom'])->name('by-room');
-        Route::delete('/{attendance}', [AttendanceController::class, 'destroy'])->name('destroy');
-        Route::post('/reset',      [AttendanceController::class, 'reset'])->name('reset');
-        Route::get('/export',      [AttendanceController::class, 'export'])->name('export');
+        Route::get('/',          [AttendanceController::class, 'index'])->name('index');
+        Route::get('/per-ruang', [AttendanceController::class, 'byRoom'])->name('by-room');
+        Route::get('/export',    [AttendanceController::class, 'export'])->name('export');
+
+        // Superadmin: tandai semua hadir
+        Route::post('/mark-all-present', [AttendanceController::class, 'markAllPresent'])->name('mark-all-present');
+
+        // Reset semua absensi (DELETE)
+        Route::delete('/reset',          [AttendanceController::class, 'reset'])->name('reset');
+
+        // Hapus satu record — letakkan PALING BAWAH agar tidak clash dengan path statis di atas
+        Route::delete('/{attendance}',   [AttendanceController::class, 'destroy'])->name('destroy');
     });
 
     // ── Superadmin only ───────────────────────────────────────

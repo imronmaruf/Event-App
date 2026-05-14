@@ -30,7 +30,7 @@ class AttendanceController extends Controller
             });
         }
 
-        $attendances = $query->paginate(30);
+        $attendances = $query->get();
         $stats = [
             'total'  => $event->participants()->count(),
             'hadir'  => $event->attendances()->count(),
@@ -69,9 +69,60 @@ class AttendanceController extends Controller
         return view('admin.attendances.by_room', compact('event', 'rooms'));
     }
 
-    /** Reset semua data absensi untuk event ini */
+    /**
+     * [SUPERADMIN] Tandai SEMUA peserta event sebagai hadir sekarang.
+     * Peserta yang sudah hadir tidak akan diduplikasi.
+     * Digunakan untuk keperluan testing input nilai / perangkingan.
+     */
+    public function markAllPresent(Request $request, Event $event)
+    {
+        $this->authorizeSuperAdmin();
+        $this->authorizeEvent($event);
+
+        $request->validate([
+            'confirm' => 'required|in:HADIR',
+        ], ['confirm.in' => 'Ketik "HADIR" untuk konfirmasi.']);
+
+        $now = now();
+
+        // Ambil semua participant_id yang BELUM punya record attendance di event ini
+        $alreadyPresent = Attendance::where('event_id', $event->id)
+            ->pluck('participant_id')
+            ->toArray();
+
+        $participants = $event->participants()
+            ->whereNotIn('id', $alreadyPresent)
+            ->pluck('id');
+
+        $inserts = $participants->map(fn($pid) => [
+            'event_id'       => $event->id,
+            'participant_id' => $pid,
+            'attended_at'    => $now,
+            'created_at'     => $now,
+            'updated_at'     => $now,
+        ])->toArray();
+
+        if (!empty($inserts)) {
+            // Insert secara batch agar efisien untuk ratusan/ribuan peserta
+            foreach (array_chunk($inserts, 500) as $chunk) {
+                Attendance::insert($chunk);
+            }
+        }
+
+        $count = count($inserts);
+
+        return redirect()->route('admin.participants.index', $event)
+            ->with('success', $count > 0
+                ? "{$count} peserta berhasil ditandai hadir."
+                : 'Semua peserta sudah tercatat hadir sebelumnya.');
+    }
+
+    /**
+     * [SUPERADMIN] Reset / hapus SEMUA data absensi untuk event ini.
+     */
     public function reset(Request $request, Event $event)
     {
+        $this->authorizeSuperAdmin();
         $this->authorizeEvent($event);
 
         $request->validate([
@@ -80,7 +131,7 @@ class AttendanceController extends Controller
 
         Attendance::where('event_id', $event->id)->delete();
 
-        return redirect()->route('admin.attendances.index', $event)
+        return redirect()->route('admin.participants.index', $event)
             ->with('success', 'Semua data absensi berhasil direset.');
     }
 
@@ -97,8 +148,6 @@ class AttendanceController extends Controller
     public function export(Event $event)
     {
         $this->authorizeEvent($event);
-        // Menggunakan maatwebsite/excel
-        // Buat AttendanceExport class jika diperlukan, contoh inline:
         $filename = 'absensi_' . $event->slug . '_' . now()->format('Ymd_His') . '.xlsx';
         return response()->streamDownload(function () use ($event) {
             $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
@@ -146,6 +195,13 @@ class AttendanceController extends Controller
     {
         if (!$event->canBeManagedBy(Auth::user())) {
             abort(403, 'Anda tidak memiliki akses ke event ini.');
+        }
+    }
+
+    private function authorizeSuperAdmin(): void
+    {
+        if (Auth::user()->role !== 'superadmin') {
+            abort(403, 'Fitur ini hanya untuk Superadmin.');
         }
     }
 }

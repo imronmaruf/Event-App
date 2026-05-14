@@ -43,7 +43,7 @@ class ParticipantController extends Controller
             $query->whereDoesntHave('attendance');
         }
 
-        $participants = $query->orderBy('name')->paginate(30);
+        $participants = $query->orderBy('name')->get();
 
         $stats = [
             'total'  => Participant::where('event_id', $event->id)->count(),
