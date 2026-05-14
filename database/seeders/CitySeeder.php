@@ -15,6 +15,7 @@ class CitySeeder extends Seeder
             ['name' => 'Aceh Besar',        'province' => 'Aceh'],
             ['name' => 'Aceh Selatan',      'province' => 'Aceh'],
             ['name' => 'Aceh Singkil',      'province' => 'Aceh'],
+            ['name' => 'Aceh Tamiang',       'province' => 'Aceh'],
             ['name' => 'Aceh Tengah',       'province' => 'Aceh'],
             ['name' => 'Aceh Timur',        'province' => 'Aceh'],
             ['name' => 'Aceh Utara',        'province' => 'Aceh'],
