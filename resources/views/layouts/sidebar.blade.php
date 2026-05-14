@@ -24,6 +24,10 @@
                 class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
                 <i class="bi bi-people"></i> Manajemen Admin
             </a>
+            <a href="{{ route('admin.cities.index') }}"
+                class="nav-link {{ request()->routeIs('admin.cities.*') ? 'active' : '' }}">
+                <i class="bi bi-geo-alt"></i> Manajemen Kota
+            </a>
         @endif
     @endauth
 </div>
