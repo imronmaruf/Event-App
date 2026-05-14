@@ -30,7 +30,7 @@ class AttendanceController extends Controller
             });
         }
 
-        $attendances = $query->paginate(30);
+        $attendances = $query->get();
         $stats = [
             'total'  => $event->participants()->count(),
             'hadir'  => $event->attendances()->count(),
