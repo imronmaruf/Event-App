@@ -181,13 +181,7 @@
         }
     </style>
 @endpush
-{{--
-@section('topbar-actions')
-    <button class="btn btn-sm" onclick="openCreateModal()"
-        style="background:linear-gradient(135deg,#7b1fa2,#9c27b0);color:#fff;border-radius:10px;font-weight:700;padding:7px 16px;border:none;">
-        <i class="bi bi-plus-circle me-1"></i> Tambah Kota
-    </button>
-@endsection --}}
+
 
 @section('content')
 
