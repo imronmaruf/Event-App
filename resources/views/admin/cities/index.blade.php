@@ -604,8 +604,10 @@
         function openDeleteModal(id, name, unitsCount) {
             _deleteId = id;
             document.getElementById('deleteCityName').textContent = name;
+
             const warn = document.getElementById('deleteWarning');
             const btn = document.getElementById('btnDeleteCity');
+
             if (unitsCount > 0) {
                 warn.style.display = 'block';
                 btn.disabled = true;
@@ -615,6 +617,7 @@
                 btn.disabled = false;
                 btn.style.opacity = '1';
             }
+
             new bootstrap.Modal(document.getElementById('modalDelete')).show();
         }
 
@@ -628,27 +631,33 @@
 
             try {
                 const res = await fetch(c.delete_url, {
-                    method: 'POST',
+                    method: 'DELETE',
                     headers: {
-                        'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': CSRF,
                         'Accept': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        _method: 'DELETE'
-                    }),
+                    }
                 });
 
-                const data = await res.json();
+                // handle kalau response bukan JSON (biar gak "Failed to fetch")
+                let data = {};
+                try {
+                    data = await res.json();
+                } catch (e) {}
 
-                if (!res.ok) throw new Error(data.message ?? 'Gagal menghapus.');
+                if (!res.ok) {
+                    throw new Error(data.message || 'Gagal menghapus data.');
+                }
 
                 bootstrap.Modal.getInstance(document.getElementById('modalDelete')).hide();
-                showToast(data.message ?? `Kota berhasil dihapus.`);
-                reloadPage();
+                showToast(data.message || 'Kota berhasil dihapus.');
+
+                // reload lebih aman
+                setTimeout(() => location.reload(), 800);
 
             } catch (err) {
-                showToast(err.message, 'danger');
+                console.error(err);
+                showToast(err.message || 'Terjadi kesalahan saat menghapus.', 'danger');
+
                 btn.disabled = false;
                 btn.innerHTML = '<i class="bi bi-trash me-1"></i> Ya, Hapus';
             }
