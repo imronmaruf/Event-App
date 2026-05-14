@@ -77,16 +77,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth.admin'])->group(functi
 
         // Upload file hasil ujian
         Route::post('/upload', [RankingController::class, 'upload'])->name('upload');
-
         // Download template Excel
         Route::get('/template', [RankingController::class, 'downloadTemplate'])->name('template');
-
         // Export ranking
         Route::get('/export', [RankingController::class, 'export'])->name('export');
-
         // Reset data
         Route::delete('/reset', [RankingController::class, 'reset'])->name('reset');
-
         // Data ranking (AJAX / DataTable)
         Route::get('/data', [RankingController::class, 'rankingData'])->name('data');
     });
