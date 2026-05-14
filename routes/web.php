@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Admin\{DashboardController, EventController, ParticipantController, AttendanceController, UnitController, UserController};
+use App\Http\Controllers\Admin\{DashboardController, EventController, ParticipantController, AttendanceController, UnitController, UserController, CityController};
 use App\Http\Controllers\Admin\RankingController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Public\AttendanceController as PublicAttendanceController;
@@ -108,5 +108,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth.admin'])->group(functi
     Route::middleware(['auth.superadmin'])->group(function () {
         Route::resource('units', UnitController::class)->except(['show']);
         Route::resource('users', UserController::class)->except(['show']);
+        Route::resource('cities', CityController::class)->except(['show']);
     });
 });
