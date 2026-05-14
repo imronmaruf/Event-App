@@ -10,16 +10,23 @@ class CitySeeder extends Seeder
     public function run(): void
     {
         $cities = [
-            ['name' => 'Banda Aceh',    'province' => 'Aceh'],
-            ['name' => 'Lhokseumawe',   'province' => 'Aceh'],
-            ['name' => 'Langsa',        'province' => 'Aceh'],
-            ['name' => 'Sabang',        'province' => 'Aceh'],
-            ['name' => 'Subulussalam',  'province' => 'Aceh'],
-            ['name' => 'Aceh Besar',    'province' => 'Aceh'],
-            ['name' => 'Aceh Utara',    'province' => 'Aceh'],
-            ['name' => 'Aceh Selatan',  'province' => 'Aceh'],
-            ['name' => 'Aceh Timur',    'province' => 'Aceh'],
-            ['name' => 'Pidie',         'province' => 'Aceh'],
+            ['name' => 'Aceh Barat',        'province' => 'Aceh'],
+            ['name' => 'Aceh Barat Daya',   'province' => 'Aceh'],
+            ['name' => 'Aceh Besar',        'province' => 'Aceh'],
+            ['name' => 'Aceh Selatan',      'province' => 'Aceh'],
+            ['name' => 'Aceh Singkil',      'province' => 'Aceh'],
+            ['name' => 'Aceh Tengah',       'province' => 'Aceh'],
+            ['name' => 'Aceh Timur',        'province' => 'Aceh'],
+            ['name' => 'Aceh Utara',        'province' => 'Aceh'],
+            ['name' => 'Banda Aceh',        'province' => 'Aceh'],
+            ['name' => 'Bireun',            'province' => 'Aceh'],
+            ['name' => 'Gayo Lues',         'province' => 'Aceh'],
+            ['name' => 'Langsa',            'province' => 'Aceh'],
+            ['name' => 'Lhokseumawe',       'province' => 'Aceh'],
+            ['name' => 'Pidie',             'province' => 'Aceh'],
+            ['name' => 'Pidie Jaya',        'province' => 'Aceh'],
+            ['name' => 'Sabang',            'province' => 'Aceh'],
+            ['name' => 'Subulussalam',      'province' => 'Aceh'],
         ];
 
         foreach ($cities as $city) {
