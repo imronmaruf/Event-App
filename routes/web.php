@@ -1,7 +1,15 @@
 <?php
 
-use App\Http\Controllers\Admin\{DashboardController, EventController, ParticipantController, AttendanceController, UnitController, UserController, CityController};
-use App\Http\Controllers\Admin\RankingController;
+use App\Http\Controllers\Admin\{
+    DashboardController,
+    EventController,
+    ParticipantController,
+    AttendanceController,
+    RankingController,
+    UnitController,
+    UserController,
+    CityController,
+};
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Public\AttendanceController as PublicAttendanceController;
 use Illuminate\Support\Facades\Route;
@@ -9,26 +17,21 @@ use Illuminate\Support\Facades\Route;
 // ══════════════════════════════════════════════════════════════
 //  AUTH
 // ══════════════════════════════════════════════════════════════
-Route::get('/login', [LoginController::class, 'showLogin'])->name('login');
+Route::get('/login',  [LoginController::class, 'showLogin'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-
 Route::get('/', fn() => redirect()->route('login'));
 
 // ══════════════════════════════════════════════════════════════
-//  PUBLIC — Halaman absensi (tanpa login)
-//  URL unik per event: /absensi/{slug}
+//  PUBLIC — Absensi (tanpa login)
 // ══════════════════════════════════════════════════════════════
 Route::prefix('absensi')->name('attendance.')->group(function () {
-    // Halaman utama absensi
-    Route::get('/{slug}', [PublicAttendanceController::class, 'show'])->name('show');
-
-    // AJAX endpoints
-    Route::post('/{slug}/cari',    [PublicAttendanceController::class, 'find'])->name('find');
-    Route::post('/{slug}/hadir',   [PublicAttendanceController::class, 'markAttendance'])->name('mark');
-    Route::get('/{slug}/peserta',  [PublicAttendanceController::class, 'participants'])->name('participants');
-    Route::get('/{slug}/riwayat',  [PublicAttendanceController::class, 'history'])->name('history');
-    Route::get('/{slug}/ruang',    [PublicAttendanceController::class, 'rooms'])->name('rooms');
+    Route::get('/{slug}',         [PublicAttendanceController::class, 'show'])->name('show');
+    Route::post('/{slug}/cari',   [PublicAttendanceController::class, 'find'])->name('find');
+    Route::post('/{slug}/hadir',  [PublicAttendanceController::class, 'markAttendance'])->name('mark');
+    Route::get('/{slug}/peserta', [PublicAttendanceController::class, 'participants'])->name('participants');
+    Route::get('/{slug}/riwayat', [PublicAttendanceController::class, 'history'])->name('history');
+    Route::get('/{slug}/ruang',   [PublicAttendanceController::class, 'rooms'])->name('rooms');
 });
 
 // ══════════════════════════════════════════════════════════════
@@ -41,73 +44,55 @@ Route::prefix('admin')->name('admin.')->middleware(['auth.admin'])->group(functi
 
     // ── Events ────────────────────────────────────────────────
     Route::resource('events', EventController::class);
-    Route::patch('events/{event}/toggle-active',      [EventController::class, 'toggleActive'])->name('events.toggle');
-    Route::post('events/{event}/regenerate-codes',    [EventController::class, 'regenerateCodes'])->name('events.regenerate-codes');
-    Route::post('events/{event}/digit-settings',      [EventController::class, 'updateDigitSettings'])->name('events.digit-settings');
-    Route::get('events/{event}/detect-digits',        [EventController::class, 'detectDigits'])->name('events.detect-digits');
+    Route::patch('events/{event}/toggle-active',   [EventController::class, 'toggleActive'])->name('events.toggle');
+    Route::post('events/{event}/regenerate-codes', [EventController::class, 'regenerateCodes'])->name('events.regenerate-codes');
+    Route::post('events/{event}/digit-settings',   [EventController::class, 'updateDigitSettings'])->name('events.digit-settings');
+    Route::get('events/{event}/detect-digits',     [EventController::class, 'detectDigits'])->name('events.detect-digits');
 
-    // ── Participants (nested dalam event) ─────────────────────
+    // ── Participants ──────────────────────────────────────────
     Route::prefix('events/{event}/participants')->name('participants.')->group(function () {
-        Route::get('/',            [ParticipantController::class, 'index'])->name('index');
-        Route::get('/create',      [ParticipantController::class, 'create'])->name('create');
-        Route::post('/',           [ParticipantController::class, 'store'])->name('store');
+        Route::get('/',                   [ParticipantController::class, 'index'])->name('index');
+        Route::get('/create',             [ParticipantController::class, 'create'])->name('create');
+        Route::post('/',                  [ParticipantController::class, 'store'])->name('store');
+        Route::get('/import',             [ParticipantController::class, 'importForm'])->name('import');
+        Route::post('/import',            [ParticipantController::class, 'importProcess'])->name('import.process');
+        Route::get('/template',           [ParticipantController::class, 'downloadTemplate'])->name('template');
         Route::get('/{participant}/edit', [ParticipantController::class, 'edit'])->name('edit');
         Route::put('/{participant}',      [ParticipantController::class, 'update'])->name('update');
         Route::delete('/{participant}',   [ParticipantController::class, 'destroy'])->name('destroy');
-        // Import
-        Route::get('/import',      [ParticipantController::class, 'importForm'])->name('import');
-        Route::post('/import',     [ParticipantController::class, 'importProcess'])->name('import.process');
-        Route::get('/template',    [ParticipantController::class, 'downloadTemplate'])->name('template');
     });
 
-    // ── Rankings (nested dalam event) ───────────────────────
-    // Route::prefix('events/{event}/rankings')->name('rankings.')->group(function () {
-    //     Route::get('/', [RankingController::class, 'index'])->name('index');
-    //     Route::get('/config', [RankingController::class, 'config'])->name('config');
-    //     Route::post('/upload', [RankingController::class, 'upload'])->name('upload');
-    // });
-    Route::prefix('events/{event}/rankings')->name('rankings.')->group(function () {
-
-        // Halaman utama ranking
-        Route::get('/', [RankingController::class, 'index'])->name('index');
-
-        // Simpan konfigurasi poin
-        Route::post('/config', [RankingController::class, 'saveConfig'])->name('config.save');
-        Route::get('/config', [RankingController::class, 'config'])->name('config');
-
-        // Upload file hasil ujian
-        Route::post('/upload', [RankingController::class, 'upload'])->name('upload');
-        // Download template Excel
-        Route::get('/template', [RankingController::class, 'downloadTemplate'])->name('template');
-        // Export ranking
-        Route::get('/export', [RankingController::class, 'export'])->name('export');
-        // Reset data
-        Route::delete('/reset', [RankingController::class, 'reset'])->name('reset');
-        // Data ranking (AJAX / DataTable)
-        Route::get('/data', [RankingController::class, 'rankingData'])->name('data');
-    });
-
-
-    // ── Attendances (nested dalam event) ──────────────────────
+    // ── Attendances ───────────────────────────────────────────
     Route::prefix('events/{event}/attendances')->name('attendances.')->group(function () {
-        Route::get('/',          [AttendanceController::class, 'index'])->name('index');
-        Route::get('/per-ruang', [AttendanceController::class, 'byRoom'])->name('by-room');
-        Route::get('/export',    [AttendanceController::class, 'export'])->name('export');
+        Route::get('/',                        [AttendanceController::class, 'index'])->name('index');
+        Route::get('/per-ruang',               [AttendanceController::class, 'byRoom'])->name('by-room');
+        Route::get('/export',                  [AttendanceController::class, 'export'])->name('export');
+        Route::post('/mark-all-present',       [AttendanceController::class, 'markAllPresent'])->name('mark-all-present');
+        Route::delete('/reset',                [AttendanceController::class, 'reset'])->name('reset');
+        // ⚠️ Route dengan {attendance} harus paling bawah agar tidak clash dengan path statis
+        Route::delete('/{attendance}',         [AttendanceController::class, 'destroy'])->name('destroy');
+    });
 
-        // Superadmin: tandai semua hadir
-        Route::post('/mark-all-present', [AttendanceController::class, 'markAllPresent'])->name('mark-all-present');
-
-        // Reset semua absensi (DELETE)
-        Route::delete('/reset',          [AttendanceController::class, 'reset'])->name('reset');
-
-        // Hapus satu record — letakkan PALING BAWAH agar tidak clash dengan path statis di atas
-        Route::delete('/{attendance}',   [AttendanceController::class, 'destroy'])->name('destroy');
+    // ── Rankings ──────────────────────────────────────────────
+    Route::prefix('events/{event}/rankings')->name('rankings.')->group(function () {
+        Route::get('/',         [RankingController::class, 'index'])->name('index');
+        Route::post('/config',  [RankingController::class, 'saveConfig'])->name('config');   // ← nama: admin.rankings.config
+        Route::post('/upload',  [RankingController::class, 'upload'])->name('upload');
+        Route::get('/template', [RankingController::class, 'downloadTemplate'])->name('template');
+        Route::get('/export',   [RankingController::class, 'export'])->name('export');
+        Route::delete('/reset', [RankingController::class, 'reset'])->name('reset');
+        Route::get('/data',     [RankingController::class, 'rankingData'])->name('data');
     });
 
     // ── Superadmin only ───────────────────────────────────────
     Route::middleware(['auth.superadmin'])->group(function () {
+
         Route::resource('units', UnitController::class)->except(['show']);
         Route::resource('users', UserController::class)->except(['show']);
-        Route::resource('cities', CityController::class)->except(['show']);
+
+        // Cities — resource standar + alias POST untuk update
+        // (mengatasi PUT yang diblok Nginx di beberapa konfigurasi server)
+        Route::resource('cities', CityController::class)->except(['show', 'create', 'edit']);
+        Route::post('cities/{city}/update', [CityController::class, 'update'])->name('cities.update-post');
     });
 });

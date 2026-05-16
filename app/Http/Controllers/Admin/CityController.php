@@ -5,25 +5,41 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\City;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CityController extends Controller
 {
     public function index()
     {
-        $cities = City::withCount('units')->orderBy('name')->paginate(20);
+        $cities = City::withCount('units')->orderBy('name')->paginate(50);
         return view('admin.cities.index', compact('cities'));
     }
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name'     => 'required|string|max:100|unique:cities,name',
             'province' => 'nullable|string|max:100',
+        ], [
+            'name.required' => 'Nama kota wajib diisi.',
+            'name.unique'   => 'Nama kota sudah terdaftar.',
         ]);
 
-        $city = City::create($request->only('name', 'province'));
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal.',
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
+
+        $city = City::create([
+            'name'     => trim($request->name),
+            'province' => trim($request->province ?? ''),
+        ]);
 
         return response()->json([
+            'success' => true,
             'message' => "Kota \"{$city->name}\" berhasil ditambahkan.",
             'city'    => $city,
         ]);
@@ -31,14 +47,29 @@ class CityController extends Controller
 
     public function update(Request $request, City $city)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name'     => "required|string|max:100|unique:cities,name,{$city->id}",
             'province' => 'nullable|string|max:100',
+        ], [
+            'name.required' => 'Nama kota wajib diisi.',
+            'name.unique'   => 'Nama kota sudah terdaftar.',
         ]);
 
-        $city->update($request->only('name', 'province'));
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal.',
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
+
+        $city->update([
+            'name'     => trim($request->name),
+            'province' => trim($request->province ?? ''),
+        ]);
 
         return response()->json([
+            'success' => true,
             'message' => "Kota \"{$city->name}\" berhasil diperbarui.",
             'city'    => $city,
         ]);
@@ -48,7 +79,8 @@ class CityController extends Controller
     {
         if ($city->units()->exists()) {
             return response()->json([
-                'message' => "Kota \"{$city->name}\" tidak bisa dihapus karena masih memiliki unit terkait.",
+                'success' => false,
+                'message' => "Kota \"{$city->name}\" tidak bisa dihapus karena masih memiliki {$city->units()->count()} unit terkait.",
             ], 422);
         }
 
@@ -56,6 +88,7 @@ class CityController extends Controller
         $city->delete();
 
         return response()->json([
+            'success' => true,
             'message' => "Kota \"{$name}\" berhasil dihapus.",
         ]);
     }

@@ -95,20 +95,20 @@
             transform: translateY(-1px);
         }
 
-        .modal-header-custom {
+        .modal-content {
+            border-radius: 16px;
+            border: none;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .2);
+        }
+
+        .modal-header-purple {
             background: linear-gradient(135deg, #7b1fa2, #9c27b0);
             color: #fff;
             border-radius: 14px 14px 0 0;
         }
 
-        .modal-header-custom .btn-close {
+        .modal-header-purple .btn-close {
             filter: invert(1);
-        }
-
-        .modal-content {
-            border-radius: 16px;
-            border: none;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, .2);
         }
 
         .form-label {
@@ -118,18 +118,25 @@
             margin-bottom: 5px;
         }
 
-        .form-control,
-        .form-select {
+        .form-control {
             border-radius: 10px;
             border: 1.5px solid #e0e0e0;
             font-size: 13.5px;
             padding: 9px 12px;
         }
 
-        .form-control:focus,
-        .form-select:focus {
+        .form-control:focus {
             border-color: #7b1fa2;
             box-shadow: 0 0 0 3px rgba(123, 31, 162, .12);
+        }
+
+        .form-control.is-invalid {
+            border-color: #c62828;
+        }
+
+        .invalid-feedback {
+            font-size: 12px;
+            color: #c62828;
         }
 
         .stat-pill {
@@ -145,7 +152,7 @@
             color: #555;
         }
 
-        .unit-avatar {
+        .city-avatar {
             width: 38px;
             height: 38px;
             border-radius: 10px;
@@ -159,68 +166,80 @@
             flex-shrink: 0;
         }
 
-        .dot-active {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: #2e7d32;
-            display: inline-block;
+        /* Toast notification */
+        .toast-container-custom {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
         }
 
-        .dot-inactive {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: #c62828;
-            display: inline-block;
+        .toast-item {
+            background: #fff;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, .15);
+            border-left: 4px solid;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13.5px;
+            animation: slideIn .3s ease;
         }
 
-        /* toast */
-        #liveToast {
-            min-width: 280px;
+        .toast-item.success {
+            border-color: #2e7d32;
+        }
+
+        .toast-item.danger {
+            border-color: #c62828;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0)
+            }
         }
     </style>
 @endpush
 
+@section('topbar-actions')
+    <button onclick="openCreateModal()" class="btn btn-sm fw-bold"
+        style="background:linear-gradient(135deg,#7b1fa2,#9c27b0);color:#fff;border-radius:10px;border:none;padding:7px 16px;">
+        <i class="bi bi-plus-circle me-1"></i> Tambah Kota
+    </button>
+@endsection
 
 @section('content')
 
-    {{-- Flash messages --}}
-    @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert"
-            style="border-radius:12px;font-size:13.5px;">
-            <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
-    @if (session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert"
-            style="border-radius:12px;font-size:13.5px;">
-            <i class="bi bi-exclamation-triangle me-2"></i>{{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
+    {{-- Toast container --}}
+    <div class="toast-container-custom" id="toast-container"></div>
 
-    {{-- Stat pills --}}
+    {{-- Stat --}}
     <div class="d-flex flex-wrap gap-2 mb-4">
         <div class="stat-pill">
             <span style="width:8px;height:8px;border-radius:50%;background:#7b1fa2;display:inline-block;"></span>
             Total: <strong>{{ $cities->total() }}</strong> kota
         </div>
-        <div class="stat-pill">
-            <i class="bi bi-building text-primary" style="font-size:12px;"></i>
-            Total Unit: <strong>{{ $cities->getCollection()->sum('units_count') }}</strong>
-        </div>
     </div>
 
+    {{-- Table card --}}
     <div class="card dt-card">
         <div class="card-header d-flex align-items-center justify-content-between">
             <div>
                 <h6 class="mb-0 fw-bold" style="color:#7b1fa2;"><i class="bi bi-geo-alt me-2"></i>Daftar Kota</h6>
-                <small class="text-muted">Kelola data kota</small>
+                <small class="text-muted">Kelola kota penyelenggara event</small>
             </div>
-            <button class="btn btn-sm" onclick="openCreateModal()"
-                style="background:linear-gradient(135deg,#7b1fa2,#9c27b0);color:#fff;border-radius:10px;font-weight:700;border:none;">
+            <button onclick="openCreateModal()" class="btn btn-sm fw-bold"
+                style="background:linear-gradient(135deg,#7b1fa2,#9c27b0);color:#fff;border-radius:10px;border:none;">
                 <i class="bi bi-plus me-1"></i> Kota Baru
             </button>
         </div>
@@ -232,7 +251,7 @@
                             <th>#</th>
                             <th>Kota</th>
                             <th>Provinsi</th>
-                            <th class="text-center">Jumlah Unit</th>
+                            <th>Unit</th>
                             <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
@@ -242,20 +261,14 @@
                                 <td class="text-muted" style="font-size:12px;">{{ $i + 1 }}</td>
                                 <td>
                                     <div class="d-flex align-items-center gap-2">
-                                        <div class="unit-avatar">
-                                            {{ strtoupper(substr($city->name, 0, 1)) }}
-                                        </div>
-                                        <div>
-                                            <div class="fw-bold" style="font-size:13.5px;">{{ $city->name }}</div>
-                                        </div>
+                                        <div class="city-avatar">{{ strtoupper(substr($city->name, 0, 1)) }}</div>
+                                        <span class="fw-bold" style="font-size:13.5px;">{{ $city->name }}</span>
                                     </div>
                                 </td>
-                                {{-- province adalah kolom string, bukan relasi --}}
-                                <td style="font-size:13px;">{{ $city->province ?: '-' }}</td>
-                                <td class="text-center">
-                                    <span class="fw-bold" style="font-size:15px;color:#7b1fa2;">
-                                        {{ $city->units_count ?? 0 }}
-                                    </span>
+                                <td class="text-muted" style="font-size:13px;">{{ $city->province ?? '-' }}</td>
+                                <td>
+                                    <span class="fw-bold"
+                                        style="font-size:15px;color:#7b1fa2;">{{ $city->units_count }}</span>
                                     <span class="text-muted" style="font-size:11px;"> unit</span>
                                 </td>
                                 <td class="text-center" style="white-space:nowrap;">
@@ -264,7 +277,7 @@
                                         <i class="bi bi-pencil"></i>
                                     </button>
                                     <button class="btn-action" style="background:#ffebee;color:#c62828;" title="Hapus"
-                                        onclick="openDeleteModal({{ $city->id }}, '{{ addslashes($city->name) }}', {{ $city->units_count ?? 0 }})">
+                                        onclick="openDeleteModal({{ $city->id }}, '{{ addslashes($city->name) }}', {{ $city->units_count }})">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </td>
@@ -276,47 +289,33 @@
         </div>
     </div>
 
-    {{-- Data JSON untuk JS --}}
-    <script id="citiesData" type="application/json">
-        {!! json_encode($cities->getCollection()->map(fn($c) => [
-            'id'         => $c->id,
-            'name'       => $c->name,
-            'province'   => $c->province,
-            'units_count'=> $c->units_count ?? 0,
-            'update_url' => route('admin.cities.update', $c),
-            'delete_url' => route('admin.cities.destroy', $c),
-        ])) !!}
-    </script>
-
     {{-- ════ MODAL CREATE ════ --}}
     <div class="modal fade" id="modalCreate" tabindex="-1" data-bs-backdrop="static">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered" style="max-width:460px;">
             <div class="modal-content">
-                <div class="modal-header modal-header-custom py-3">
+                <div class="modal-header modal-header-purple py-3">
                     <h5 class="modal-title fw-bold"><i class="bi bi-geo-alt me-2"></i>Tambah Kota Baru</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
-                    <div class="row g-3">
-                        <div class="col-12">
-                            <label class="form-label">Nama Kota <span class="text-danger">*</span></label>
-                            <input type="text" id="c_name" class="form-control" placeholder="Contoh: Banda Aceh"
-                                maxlength="100">
-                            <div class="invalid-feedback" id="c_name_error"></div>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label">Provinsi</label>
-                            <input type="text" id="c_province" class="form-control" placeholder="Contoh: Aceh"
-                                maxlength="100">
-                            <div class="invalid-feedback" id="c_province_error"></div>
-                        </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nama Kota <span class="text-danger">*</span></label>
+                        <input type="text" id="c_name" class="form-control" placeholder="Contoh: Banda Aceh"
+                            autofocus>
+                        <div class="invalid-feedback" id="c_name_error"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Provinsi</label>
+                        <input type="text" id="c_province" class="form-control" placeholder="Contoh: Aceh">
+                        <div class="invalid-feedback" id="c_province_error"></div>
                     </div>
                 </div>
-                <div class="modal-footer border-0 pt-0 px-4 pb-4 gap-2">
+                <div class="modal-footer border-0 px-4 pb-4 pt-0 gap-2">
                     <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal"
                         style="border-radius:10px;">Batal</button>
-                    <button type="button" class="btn px-4 fw-bold" id="btnCreate" onclick="submitCreate()"
-                        style="background:linear-gradient(135deg,#7b1fa2,#9c27b0);color:#fff;border-radius:10px;border:none;">
+                    <button type="button" id="btnCreate" class="btn px-4 fw-bold"
+                        style="background:linear-gradient(135deg,#7b1fa2,#9c27b0);color:#fff;border-radius:10px;border:none;"
+                        onclick="submitCreate()">
                         <i class="bi bi-check-circle me-1"></i> Simpan
                     </button>
                 </div>
@@ -326,33 +325,32 @@
 
     {{-- ════ MODAL EDIT ════ --}}
     <div class="modal fade" id="modalEdit" tabindex="-1" data-bs-backdrop="static">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered" style="max-width:460px;">
             <div class="modal-content">
                 <div class="modal-header py-3"
                     style="background:linear-gradient(135deg,#1565c0,#1976d2);color:#fff;border-radius:14px 14px 0 0;">
-                    <h5 class="modal-title fw-bold"><i class="bi bi-geo-alt me-2"></i>Edit Kota</h5>
+                    <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square me-2"></i>Edit Kota</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" style="filter:invert(1);"></button>
                 </div>
                 <div class="modal-body p-4">
                     <input type="hidden" id="e_id">
-                    <div class="row g-3">
-                        <div class="col-12">
-                            <label class="form-label">Nama Kota <span class="text-danger">*</span></label>
-                            <input type="text" id="e_name" class="form-control" maxlength="100">
-                            <div class="invalid-feedback" id="e_name_error"></div>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label">Provinsi</label>
-                            <input type="text" id="e_province" class="form-control" maxlength="100">
-                            <div class="invalid-feedback" id="e_province_error"></div>
-                        </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nama Kota <span class="text-danger">*</span></label>
+                        <input type="text" id="e_name" class="form-control" placeholder="Nama kota">
+                        <div class="invalid-feedback" id="e_name_error"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Provinsi</label>
+                        <input type="text" id="e_province" class="form-control" placeholder="Nama provinsi">
+                        <div class="invalid-feedback" id="e_province_error"></div>
                     </div>
                 </div>
-                <div class="modal-footer border-0 pt-0 px-4 pb-4 gap-2">
+                <div class="modal-footer border-0 px-4 pb-4 pt-0 gap-2">
                     <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal"
                         style="border-radius:10px;">Batal</button>
-                    <button type="button" class="btn px-4 fw-bold" id="btnEdit" onclick="submitEdit()"
-                        style="background:linear-gradient(135deg,#1565c0,#1976d2);color:#fff;border-radius:10px;border:none;">
+                    <button type="button" id="btnEdit" class="btn px-4 fw-bold"
+                        style="background:linear-gradient(135deg,#1565c0,#1976d2);color:#fff;border-radius:10px;border:none;"
+                        onclick="submitEdit()">
                         <i class="bi bi-check-circle me-1"></i> Simpan Perubahan
                     </button>
                 </div>
@@ -363,32 +361,41 @@
     {{-- ════ MODAL DELETE ════ --}}
     <div class="modal fade" id="modalDelete" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered" style="max-width:420px;">
-            <div class="modal-content">
+            <div class="modal-content" style="border-radius:16px;">
                 <div class="modal-body text-center p-5">
                     <div
                         style="width:68px;height:68px;background:#ffebee;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:30px;">
-                        🗑️
-                    </div>
+                        🗺️</div>
                     <h5 class="fw-bold mb-2">Hapus Kota?</h5>
                     <p class="text-muted mb-1" style="font-size:14px;">Kota berikut akan dihapus:</p>
                     <p class="fw-bold" id="deleteCityName" style="color:#7b1fa2;font-size:15px;"></p>
-                    <div id="deleteWarning" class="alert alert-warning py-2 px-3"
+                    <div id="deleteWarning" class="alert alert-warning py-2 px-3 text-start"
                         style="font-size:12px;border-radius:10px;display:none;">
-                        ⚠️ Kota ini masih memiliki unit terkait. Hapus semua unit di kota ini terlebih dahulu.
+                        ⚠️ Kota ini masih memiliki unit terkait. Hapus atau pindahkan unit terlebih dahulu.
                     </div>
-                    <p class="text-muted" style="font-size:12px;">Tindakan ini tidak bisa dibatalkan.</p>
                 </div>
                 <div class="d-flex gap-2 px-4 pb-4">
                     <button class="btn btn-light flex-grow-1" data-bs-dismiss="modal"
                         style="border-radius:10px;font-weight:600;">Batal</button>
-                    <button type="button" id="btnDeleteCity" class="btn btn-danger flex-grow-1 fw-bold"
-                        onclick="submitDelete()" style="border-radius:10px;">
+                    <button id="btnDeleteCity" class="btn btn-danger flex-grow-1 fw-bold" style="border-radius:10px;"
+                        onclick="submitDelete()">
                         <i class="bi bi-trash me-1"></i> Ya, Hapus
                     </button>
                 </div>
             </div>
         </div>
     </div>
+
+    {{-- Data embed --}}
+    <script id="citiesData" type="application/json">{!! json_encode($cities->getCollection()->map(fn($c) => [
+    'id'         => $c->id,
+    'name'       => $c->name,
+    'province'   => $c->province,
+    'units_count'=> $c->units_count,
+    // Gunakan route() untuk URL — tapi kita akan override di JS jika ada mismatch
+    'update_url' => route('admin.cities.update-post', $c),
+    'delete_url' => route('admin.cities.destroy', $c),
+])) !!}</script>
 
 @endsection
 
@@ -399,7 +406,9 @@
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
     <script>
-        // ── DataTable ──────────────────────────────────────────────
+        // ════════════════════════════════════════════════════════════
+        //  INIT
+        // ════════════════════════════════════════════════════════════
         $(document).ready(function() {
             $('#citiesTable').DataTable({
                 responsive: true,
@@ -425,30 +434,124 @@
             });
         });
 
-        // ── Data map ───────────────────────────────────────────────
+        // ── Data map ──────────────────────────────────────────────────
         const CITIES = {};
         JSON.parse(document.getElementById('citiesData').textContent)
             .forEach(c => CITIES[c.id] = c);
 
-        const CSRF = document.querySelector('meta[name="csrf-token"]').content;
-
-        // ── Helpers ────────────────────────────────────────────────
-        function setLoading(btnId, loading) {
-            const btn = document.getElementById(btnId);
-            btn.disabled = loading;
-            btn.innerHTML = loading ?
-                '<span class="spinner-border spinner-border-sm me-1"></span> Menyimpan...' :
-                (btnId === 'btnCreate' ?
-                    '<i class="bi bi-check-circle me-1"></i> Simpan' :
-                    '<i class="bi bi-check-circle me-1"></i> Simpan Perubahan');
+        // ────────────────────────────────────────────────────────────
+        //  CSRF — ambil dari meta tag (paling reliable di semua kondisi)
+        // ────────────────────────────────────────────────────────────
+        function getCsrf() {
+            return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
         }
 
+        // ════════════════════════════════════════════════════════════
+        //  FETCH HELPER — mengatasi semua masalah di server:
+        //  1. Memakai URL relatif (tidak ada http/https mismatch)
+        //  2. Selalu sertakan CSRF
+        //  3. Tangani response bukan JSON (redirect, HTML error page)
+        //  4. Timeout 15 detik agar tidak hang selamanya
+        // ════════════════════════════════════════════════════════════
+        async function apiCall(url, method, body = null) {
+            // Konversi URL absolut → relatif agar tidak ada mismatch HTTP/HTTPS
+            // Contoh: "https://eventapp.imronmf.web.id/admin/cities/1/update"
+            //       → "/admin/cities/1/update"
+            const relativeUrl = url.replace(/^https?:\/\/[^\/]+/, '');
+
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 15000); // 15 detik timeout
+
+            try {
+                const res = await fetch(relativeUrl, {
+                    method: method,
+                    signal: controller.signal,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': getCsrf(),
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest', // penting: agar Laravel kenali sebagai AJAX
+                    },
+                    ...(body ? {
+                        body: JSON.stringify(body)
+                    } : {}),
+                });
+
+                clearTimeout(timeout);
+
+                // Cek apakah response adalah JSON
+                const contentType = res.headers.get('content-type') ?? '';
+                if (!contentType.includes('application/json')) {
+                    // Server mengirim HTML (mungkin halaman login, 500, atau redirect)
+                    const text = await res.text();
+                    console.error('Non-JSON response:', res.status, text.substring(0, 200));
+
+                    if (res.status === 419) {
+                        throw new Error('Sesi expired. Silakan refresh halaman dan coba lagi.');
+                    }
+                    if (res.status === 403) {
+                        throw new Error('Akses ditolak. Anda tidak memiliki izin untuk aksi ini.');
+                    }
+                    if (res.status === 404) {
+                        throw new Error('URL tidak ditemukan (404). Cek konfigurasi route.');
+                    }
+                    throw new Error(`Server error ${res.status}. Refresh halaman dan coba lagi.`);
+                }
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    // Validasi error (422) atau error lain dengan pesan JSON
+                    throw {
+                        isValidation: res.status === 422,
+                        data,
+                        status: res.status
+                    };
+                }
+
+                return data;
+
+            } catch (err) {
+                clearTimeout(timeout);
+
+                if (err.name === 'AbortError') {
+                    throw new Error('Request timeout. Periksa koneksi internet Anda.');
+                }
+                if (err.message === 'Failed to fetch') {
+                    throw new Error('Gagal terhubung ke server. Periksa koneksi jaringan Anda.');
+                }
+                throw err;
+            }
+        }
+
+        // ════════════════════════════════════════════════════════════
+        //  TOAST NOTIFICATION
+        // ════════════════════════════════════════════════════════════
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const icon = type === 'success' ? '✅' : '❌';
+            const div = document.createElement('div');
+            div.className = `toast-item ${type}`;
+            div.innerHTML =
+                `<span style="font-size:18px;">${icon}</span><span style="flex:1;">${message}</span>
+        <button onclick="this.parentElement.remove()" style="background:none;border:none;font-size:16px;color:#999;cursor:pointer;">✕</button>`;
+            container.appendChild(div);
+            setTimeout(() => div.remove(), 5000);
+        }
+
+        // ════════════════════════════════════════════════════════════
+        //  HELPERS UI
+        // ════════════════════════════════════════════════════════════
         function clearErrors(prefix) {
             ['name', 'province'].forEach(f => {
                 const el = document.getElementById(`${prefix}_${f}`);
                 const err = document.getElementById(`${prefix}_${f}_error`);
-                if (el) el.classList.remove('is-invalid');
-                if (err) err.textContent = '';
+                if (el) {
+                    el.classList.remove('is-invalid');
+                }
+                if (err) {
+                    err.textContent = '';
+                }
             });
         }
 
@@ -457,28 +560,22 @@
                 const el = document.getElementById(`${prefix}_${field}`);
                 const err = document.getElementById(`${prefix}_${field}_error`);
                 if (el) el.classList.add('is-invalid');
-                if (err) err.textContent = messages[0];
+                if (err) err.textContent = Array.isArray(messages) ? messages[0] : messages;
             });
         }
 
-        function showToast(message, type = 'success') {
-            // pakai alert Bootstrap sederhana — inject ke atas konten
-            const wrap = document.querySelector('.card.dt-card');
-            const div = document.createElement('div');
-            div.className = `alert alert-${type} alert-dismissible fade show`;
-            div.style.cssText = 'border-radius:12px;font-size:13.5px;';
-            div.innerHTML = `<i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
-            wrap.parentNode.insertBefore(div, wrap);
-            setTimeout(() => div.remove(), 5000);
+        function setBtnLoading(btnId, loading, defaultText) {
+            const btn = document.getElementById(btnId);
+            if (!btn) return;
+            btn.disabled = loading;
+            btn.innerHTML = loading ?
+                '<span class="spinner-border spinner-border-sm me-1"></span>Menyimpan...' :
+                defaultText;
         }
 
-        // ── Reload baris tabel tanpa full reload ───────────────────
-        function reloadPage() {
-            location.reload();
-        }
-
-        // ── CREATE ─────────────────────────────────────────────────
+        // ════════════════════════════════════════════════════════════
+        //  CREATE
+        // ════════════════════════════════════════════════════════════
         function openCreateModal() {
             clearErrors('c');
             document.getElementById('c_name').value = '';
@@ -486,6 +583,14 @@
             new bootstrap.Modal(document.getElementById('modalCreate')).show();
             setTimeout(() => document.getElementById('c_name').focus(), 400);
         }
+
+        // Enter key di form create
+        document.getElementById('c_name')?.addEventListener('keydown', e => {
+            if (e.key === 'Enter') submitCreate();
+        });
+        document.getElementById('c_province')?.addEventListener('keydown', e => {
+            if (e.key === 'Enter') submitCreate();
+        });
 
         async function submitCreate() {
             clearErrors('c');
@@ -498,41 +603,36 @@
                 return;
             }
 
-            setLoading('btnCreate', true);
+            const defaultText = '<i class="bi bi-check-circle me-1"></i> Simpan';
+            setBtnLoading('btnCreate', true, defaultText);
+
             try {
-                const res = await fetch('{{ route('admin.cities.store') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': CSRF,
-                        'Accept': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        name,
-                        province
-                    }),
+                // Gunakan URL relatif langsung — tidak ada mismatch
+                const data = await apiCall('/admin/cities', 'POST', {
+                    name,
+                    province
                 });
 
-                const data = await res.json();
-
-                if (res.status === 422) {
-                    showErrors('c', data.errors);
-                    return;
-                }
-                if (!res.ok) throw new Error(data.message ?? 'Terjadi kesalahan.');
-
-                bootstrap.Modal.getInstance(document.getElementById('modalCreate')).hide();
+                bootstrap.Modal.getInstance(document.getElementById('modalCreate'))?.hide();
                 showToast(data.message ?? `Kota "${name}" berhasil ditambahkan.`);
-                reloadPage();
+
+                // Reload setelah modal tutup
+                setTimeout(() => location.reload(), 600);
 
             } catch (err) {
-                showToast(err.message, 'danger');
+                if (err.isValidation) {
+                    showErrors('c', err.data.errors ?? {});
+                } else {
+                    showToast(err.message ?? 'Terjadi kesalahan.', 'danger');
+                }
             } finally {
-                setLoading('btnCreate', false);
+                setBtnLoading('btnCreate', false, defaultText);
             }
         }
 
-        // ── EDIT ───────────────────────────────────────────────────
+        // ════════════════════════════════════════════════════════════
+        //  EDIT
+        // ════════════════════════════════════════════════════════════
         function openEditModal(id) {
             const c = CITIES[id];
             if (!c) return;
@@ -544,12 +644,18 @@
             setTimeout(() => document.getElementById('e_name').focus(), 400);
         }
 
+        document.getElementById('e_name')?.addEventListener('keydown', e => {
+            if (e.key === 'Enter') submitEdit();
+        });
+        document.getElementById('e_province')?.addEventListener('keydown', e => {
+            if (e.key === 'Enter') submitEdit();
+        });
+
         async function submitEdit() {
             clearErrors('e');
             const id = document.getElementById('e_id').value;
             const name = document.getElementById('e_name').value.trim();
             const province = document.getElementById('e_province').value.trim();
-            const c = CITIES[id];
 
             if (!name) {
                 document.getElementById('e_name').classList.add('is-invalid');
@@ -557,42 +663,35 @@
                 return;
             }
 
-            setLoading('btnEdit', true);
+            const defaultText = '<i class="bi bi-check-circle me-1"></i> Simpan Perubahan';
+            setBtnLoading('btnEdit', true, defaultText);
+
             try {
-                const res = await fetch(c.update_url, {
-                    method: 'POST', // Laravel _method spoofing via JSON tidak bisa,
-                    headers: { // jadi kita kirim _method di body
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': CSRF,
-                        'Accept': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        _method: 'PUT',
-                        name,
-                        province
-                    }),
+                // Pakai alias route POST khusus — lebih reliable di berbagai konfigurasi server
+                // daripada PUT yang kadang diblok Nginx
+                const data = await apiCall(`/admin/cities/${id}/update`, 'POST', {
+                    name,
+                    province
                 });
 
-                const data = await res.json();
-
-                if (res.status === 422) {
-                    showErrors('e', data.errors);
-                    return;
-                }
-                if (!res.ok) throw new Error(data.message ?? 'Terjadi kesalahan.');
-
-                bootstrap.Modal.getInstance(document.getElementById('modalEdit')).hide();
+                bootstrap.Modal.getInstance(document.getElementById('modalEdit'))?.hide();
                 showToast(data.message ?? 'Kota berhasil diperbarui.');
-                reloadPage();
+                setTimeout(() => location.reload(), 600);
 
             } catch (err) {
-                showToast(err.message, 'danger');
+                if (err.isValidation) {
+                    showErrors('e', err.data.errors ?? {});
+                } else {
+                    showToast(err.message ?? 'Terjadi kesalahan.', 'danger');
+                }
             } finally {
-                setLoading('btnEdit', false);
+                setBtnLoading('btnEdit', false, defaultText);
             }
         }
 
-        // ── DELETE ─────────────────────────────────────────────────
+        // ════════════════════════════════════════════════════════════
+        //  DELETE
+        // ════════════════════════════════════════════════════════════
         let _deleteId = null;
 
         function openDeleteModal(id, name, unitsCount) {
@@ -621,37 +720,22 @@
 
             const btn = document.getElementById('btnDeleteCity');
             btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Menghapus...';
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Menghapus...';
 
             try {
-                const res = await fetch(c.delete_url, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': CSRF,
-                        'Accept': 'application/json',
-                    }
-                });
+                // Gunakan URL relatif — fix utama untuk masalah di server
+                const data = await apiCall(`/admin/cities/${_deleteId}`, 'DELETE');
 
-                // handle kalau response bukan JSON (biar gak "Failed to fetch")
-                let data = {};
-                try {
-                    data = await res.json();
-                } catch (e) {}
-
-                if (!res.ok) {
-                    throw new Error(data.message || 'Gagal menghapus data.');
-                }
-
-                bootstrap.Modal.getInstance(document.getElementById('modalDelete')).hide();
-                showToast(data.message || 'Kota berhasil dihapus.');
-
-                // reload lebih aman
-                setTimeout(() => location.reload(), 800);
+                bootstrap.Modal.getInstance(document.getElementById('modalDelete'))?.hide();
+                showToast(data.message ?? 'Kota berhasil dihapus.');
+                setTimeout(() => location.reload(), 600);
 
             } catch (err) {
-                console.error(err);
-                showToast(err.message || 'Terjadi kesalahan saat menghapus.', 'danger');
-
+                if (err.isValidation) {
+                    showToast(err.data.message ?? 'Tidak bisa menghapus.', 'danger');
+                } else {
+                    showToast(err.message ?? 'Terjadi kesalahan saat menghapus.', 'danger');
+                }
                 btn.disabled = false;
                 btn.innerHTML = '<i class="bi bi-trash me-1"></i> Ya, Hapus';
             }
